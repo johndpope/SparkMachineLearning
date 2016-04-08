@@ -52,7 +52,7 @@ public class JavaBinaryClassificationMetricsTest {
         }
     }
 
-    private static class DoubleFromString implements Function<Tuple2<Object, Object>, Double>,Serializable {
+    public static class DoubleFromString implements Function<Tuple2<Object, Object>, Double>,Serializable {
         @Override
         public Double call(Tuple2<Object, Object> t) {
             return new Double(t._1().toString());

@@ -19,18 +19,16 @@ package com.lordjoe.machine_learning.examples;
 
 // $example on$
 import com.lordjoe.distributed.SparkUtilities;
+import com.lordjoe.machine_learning.StringToLabeledPoint;
 import org.junit.Test;
-import scala.Option;
 import scala.Tuple2;
 
 import org.apache.spark.api.java.*;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.apache.spark.mllib.regression.LinearRegressionWithSGD;
 import org.apache.spark.mllib.evaluation.RegressionMetrics;
-import org.apache.spark.SparkConf;
 
 import java.io.Serializable;
 // $example off$
@@ -47,7 +45,7 @@ public class JavaRegressionMetricsTest {
     String path = "data/mllib/sample_linear_regression_data.txt";
     JavaRDD<String> data = sc.textFile(path);
     JavaRDD<LabeledPoint> parsedData = data.map(
-            new StringLabeledPointFunction()
+            new StringToLabeledPoint()
     );
     parsedData.cache();
 
@@ -82,17 +80,6 @@ public class JavaRegressionMetricsTest {
     LinearRegressionModel sameModel = LinearRegressionModel.load(sc.sc(),
       "target/tmp/LogisticRegressionModel");
     // $example off$
-  }
-
-  private static class StringLabeledPointFunction implements Function<String, LabeledPoint>,Serializable {
-    public LabeledPoint call(String line) {
-      String[] parts = line.split(" ");
-      double[] v = new double[parts.length - 1];
-      for (int i = 1; i < parts.length - 1; i++) {
-        v[i - 1] = Double.parseDouble(parts[i].split(":")[1]);
-      }
-      return new LabeledPoint(Double.parseDouble(parts[0]), Vectors.dense(v));
-    }
   }
 
   private static class LabeledPointTuple2Function implements Function<LabeledPoint, Tuple2<Object, Object>>,Serializable  {

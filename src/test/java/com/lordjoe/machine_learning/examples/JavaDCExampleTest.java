@@ -15,6 +15,7 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -26,7 +27,7 @@ public class JavaDCExampleTest {
 
     @Test
     public void testDC() throws Exception {
-        SparkUtilities.setAppName("JavaDC");
+         SparkUtilities.setAppName("JavaDC");
         JavaSparkContext jsc = SparkUtilities.getCurrentContext();
 
         SQLContext jsql = SparkUtilities.getCurrentSQLContext();

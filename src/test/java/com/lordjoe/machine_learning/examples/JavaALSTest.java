@@ -110,7 +110,7 @@ public final class JavaALSTest {
 //
 //        JavaSparkContext sc = new JavaSparkContext(sparkConf);
 //
-//        runKMeans(rank,iterations,outputDir,blocks,args[0]);
+//        run(rank,iterations,outputDir,blocks,args[0]);
 //
 //        sc.stop();
 //    }
