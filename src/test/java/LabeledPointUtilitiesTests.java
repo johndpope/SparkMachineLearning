@@ -1,6 +1,7 @@
 import org.apache.spark.mllib.regression.LabeledPoint;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * PACKAGE_NAME.LabeledPointUtilitiesTests
@@ -19,6 +20,23 @@ public class LabeledPointUtilitiesTests {
         }
         saveLabels(inFile, outFile, keey);
     }
+
+
+    public void saveLabels(List<LabeledPoint> labels, File outFile) {
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter((new FileWriter(outFile)));
+            for (LabeledPoint p : labels) {
+                out.println(p.toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        } finally {
+            if (out != null)
+                out.close();
+        }
+     }
 
     private static void saveLabels(File inFile, File outFile, double[] keey) {
         LineNumberReader inp = null;

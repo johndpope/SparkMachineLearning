@@ -11,9 +11,9 @@ public class Position implements  Comparable<Position>{
     public final int y;
 
     public Position(int x, int y) {
-        if(x < 0 || x >= Board.getBoardSize())
+        if(x < 0 || x >= TicTacToeBoard.getBoardSize())
             throw new IllegalArgumentException("bad x");
-        if(y < 0 || y >= Board.getBoardSize())
+        if(y < 0 || y >= TicTacToeBoard.getBoardSize())
             throw new IllegalArgumentException("bad y");
         this.x = x;
         this.y = y;

@@ -10,10 +10,10 @@ import java.util.List;
  * Date: 4/7/2016
  */
 public class Row {
-    public final Board board;
-    public final Position[] cells = new Position[Board.getBoardSize()];
+    public final TicTacToeBoard board;
+    public final Position[] cells = new Position[TicTacToeBoard.getBoardSize()];
 
-    public Row(Board board,List<Position> pcells) {
+    public Row(TicTacToeBoard board, List<Position> pcells) {
         this.board = board;
         for (int i = 0; i < pcells.size(); i++) {
             cells[i] = pcells.get(i);

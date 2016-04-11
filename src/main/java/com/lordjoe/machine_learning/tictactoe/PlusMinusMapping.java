@@ -5,7 +5,7 @@ import org.apache.spark.mllib.linalg.Vectors;
 
 import java.io.Serializable;
 
-import static com.lordjoe.machine_learning.tictactoe.Board.getTotalBoardSize;
+import static com.lordjoe.machine_learning.tictactoe.TicTacToeBoard.getTotalBoardSize;
 
 /**
  * com.lordjoe.machine_learning.tictactoe.PlusMinusMapping
@@ -20,7 +20,7 @@ public class PlusMinusMapping implements IInputMapping,Serializable {
      * @return
      */
     @Override
-    public Vector boardToVector(Board b) {
+    public Vector boardToVector(TicTacToeBoard b) {
         double[] values = new double[getTotalBoardSize()];
         int index = 0;
         for (int i = 0; i < b.getBoardSize(); i++) {

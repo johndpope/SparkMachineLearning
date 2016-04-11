@@ -1,7 +1,6 @@
 package com.lordjoe.machine_learning.tictactoe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -9,7 +8,7 @@ import java.util.List;
  * User: Steve
  * Date: 4/6/2016
  */
-public class Board implements Comparable<Board> {
+public class TicTacToeBoard implements Comparable<TicTacToeBoard> {
     private static  int gBoardSize = 3;
 
     public static void setgBoardSize(int size) {
@@ -28,12 +27,12 @@ public class Board implements Comparable<Board> {
 
     private Player[][] moves = new Player[getBoardSize()][getBoardSize()];
     private transient String stringRepresentation;
-    private   transient List<Row> rows;   // build just once np need tp serialize
+    private   transient List<Row> rows;   // build just once no need to serialize
 
-    public Board() {
+    public TicTacToeBoard() {
     }
 
-    public Board(String s) {
+    public TicTacToeBoard(String s) {
         int index = 0;
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
@@ -46,7 +45,7 @@ public class Board implements Comparable<Board> {
         }
     }
 
-    public Board(Board s) {
+    public TicTacToeBoard(TicTacToeBoard s) {
         int index = 0;
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
@@ -61,7 +60,7 @@ public class Board implements Comparable<Board> {
      * @param s
      * @return
      */
-    public boolean isSubBoard(Board s) {
+    public boolean isSubBoard(TicTacToeBoard s) {
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
                 if (moves[i][j] != null)
@@ -106,10 +105,11 @@ public class Board implements Comparable<Board> {
      * @param p non null player
      * @param pos  non null not occupied position
      */
-    public void makeMove(Player p, Position pos) {
+    public void makeMove(TicTacToeMove move) {
+        Position pos = move.cell;
         if (moves[pos.x][pos.y] != null)
             throw new IllegalArgumentException("Illegal move - position occupied");
-        moves[pos.x][pos.y] = p;
+        moves[pos.x][pos.y] = move.player;
         stringRepresentation = null;
     }
 
@@ -224,10 +224,11 @@ public class Board implements Comparable<Board> {
             for (int i = 0; i < getBoardSize(); i++) {
                 for (int j = 0; j < getBoardSize(); j++) {
                     if (moves[i][j] == null)
-                        sb.append(" ");
+                        sb.append("_");
                     else
                         sb.append(moves[i][j].toString());
                 }
+                sb.append("|");
             }
             stringRepresentation = sb.toString();
         }
@@ -239,7 +240,7 @@ public class Board implements Comparable<Board> {
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
                 if (moves[i][j] == null)
-                    sb.append(" ");
+                    sb.append("_");
                 else
                     sb.append(moves[i][j].toString());
             }
@@ -257,7 +258,7 @@ public class Board implements Comparable<Board> {
      * @return
      */
     @Override
-    public int compareTo(Board o) {
+    public int compareTo(TicTacToeBoard o) {
         return toString().compareTo(o.toString());
     }
 }

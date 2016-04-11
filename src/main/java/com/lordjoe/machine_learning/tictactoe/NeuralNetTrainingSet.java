@@ -10,6 +10,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.lordjoe.machine_learning.tictactoe.Player.O;
+import static com.lordjoe.machine_learning.tictactoe.Player.X;
 
 /**
  * com.lordjoe.machine_learning.tictactoe.NeuralNetTrainingSet
@@ -19,6 +24,7 @@ import java.util.List;
  */
 public class NeuralNetTrainingSet {
 
+    public static final Random RND = new Random();
     public static final int INITIAL_SIZE = 1000;
     public static final int INCREMENT_SIZE = 1000 * 1000;
     public static final Integer ONE = new Integer(1);
@@ -72,43 +78,80 @@ public class NeuralNetTrainingSet {
         return ret;
     }
 
-    public static JavaRDD<LabeledPoint>  simulateGames(int numberGames, IInputMapping mapping,IPlayer x,IPlayer y)
+    public static JavaRDD<LabeledPoint>  simulateGames(int numberGames, double fractionRandom, IInputMapping mapping, IStrategy x, IStrategy y)
     {
         JavaRDD<Integer> items = getRDDOfSize(SparkUtilities.getCurrentContext(),numberGames);
-        JavaRDD<LabeledPoint> ret = items.flatMap(new GamePlayer(x,y,mapping));
+
+        items = SparkUtilities.persistAndCount("Built Items",items);
+
+        JavaRDD<LabeledPoint> ret = items.flatMap(new GamePlayer(x,y,fractionRandom,mapping));
+
+        ret = SparkUtilities.persistAndCount("Built Games",ret);
         return  ret;
     }
 
-    public static class GamePlayer implements FlatMapFunction<Integer,LabeledPoint>, Serializable {
+    /**
+     * when running on one machine this is a good counter
+     */
+    private static AtomicLong numberGamesSimulated = new AtomicLong(0);
 
-        private final IPlayer x;
-        private final IPlayer o;
+
+
+
+    public static class GamePlayer implements FlatMapFunction<Integer,LabeledPoint>, Serializable {
+        private double fractionRandom = 0.3;
+        private final IStrategy x;
+        private final IStrategy o;
+        private final IStrategy randomX = new RandomPlayer(X);
+        private final IStrategy randomO = new RandomPlayer(O);
+
         private final IInputMapping mapping;
 
-        public GamePlayer(IPlayer x, IPlayer o, IInputMapping mapping) {
+        public GamePlayer(IStrategy x, IStrategy o,double  random, IInputMapping mapping) {
             this.x = x;
             this.o = o;
+            fractionRandom = random;
             this.mapping = mapping;
         }
 
         @Override
         public Iterable<LabeledPoint> call(Integer integer) throws Exception {
             List<LabeledPoint> holder = new ArrayList<LabeledPoint>();
-            Game g = new Game(x,o);
-            List<Board> playBoards = g.getPlayBoards();
+            IStrategy px  = x;
+            IStrategy po  = o;
+            // sometimes play random opponents
+            if(RND.nextDouble() < fractionRandom)
+                px = randomX;
+            if(RND.nextDouble() < fractionRandom)
+                po = randomO;
+
+
+            TicTatToeGame g = new TicTatToeGame(px,po);
+            List<TicTacToeBoard> playBoards = g.getPlayBoards();
             Player winner = g.getWinner();
             double score = 0;
             if(winner != null)
                 score += winner.value;
             double numberMoves = playBoards.size();
             int move = 1;
-            for (Board playBoard : playBoards) {
+            for (TicTacToeBoard playBoard : playBoards) {
                   double myScore = 1 + ((move++) * score / numberMoves );
                   holder.add(new LabeledPoint(myScore,mapping.boardToVector(playBoard)));
             }
 
+            registerCompletion();
             return holder;
            }
+
+        /**
+         * only works on one machine
+         */
+        private void registerCompletion()
+        {
+            long total = numberGamesSimulated.addAndGet(1);
+            if(total % 100 == 0)
+                System.out.println("simulated " + total + " games");
+        }
     }
 
 }

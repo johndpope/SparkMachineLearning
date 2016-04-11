@@ -10,7 +10,7 @@ import java.util.Random;
  * User: Steve
  * Date: 4/6/2016
  */
-public class RandomPlayer implements IPlayer {
+public class RandomPlayer implements IStrategy {
     public static final Random RND = new Random();
 
     public final Player player;
@@ -26,9 +26,10 @@ public class RandomPlayer implements IPlayer {
     }
 
     @Override
-    public Position choseMove(@Nonnull Board b) {
+    public TicTacToeMove choseMove(@Nonnull TicTatToeGame g) {
+        TicTacToeBoard b = g.getBoard();
         List<Position> legalMoves = b.getLegalMoves();
         int index = RND.nextInt(legalMoves.size());
-        return legalMoves.get(index);
+        return new TicTacToeMove(player,legalMoves.get(index));
     }
 }

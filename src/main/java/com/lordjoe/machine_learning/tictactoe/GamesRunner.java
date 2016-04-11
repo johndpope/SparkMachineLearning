@@ -4,7 +4,7 @@ import org.testng.Assert;
 
 import java.util.*;
 
-import static com.lordjoe.machine_learning.tictactoe.Board.getBoardSize;
+import static com.lordjoe.machine_learning.tictactoe.TicTacToeBoard.getBoardSize;
 import static com.lordjoe.machine_learning.tictactoe.Player.*;
 
 
@@ -22,7 +22,7 @@ public class GamesRunner {
      * @param b
      * @return
      */
-    public static double scoreBoard(Board b)   {
+    public static double scoreBoard(TicTacToeBoard b)   {
         Player winner = b.hasWin();
         if(winner != null)
             return winner.value;
@@ -30,10 +30,10 @@ public class GamesRunner {
       }
 
 
-    private final Set<Board> boards = new HashSet<>();
-    private final Set<Board> x_wins = new HashSet<>();
-    private final Set<Board> o_wins = new HashSet<>();
-    private final Set<Board> draw = new HashSet<>();
+    private final Set<TicTacToeBoard> boards = new HashSet<>();
+    private final Set<TicTacToeBoard> x_wins = new HashSet<>();
+    private final Set<TicTacToeBoard> o_wins = new HashSet<>();
+    private final Set<TicTacToeBoard> draw = new HashSet<>();
     private int runsSinceChange;
     private int totalGames;
 
@@ -48,7 +48,7 @@ public class GamesRunner {
     public GamesRunner(List<String> boardStrs) {
         this();
         for (String board : boardStrs) {
-            boards.add(new Board(board));
+            boards.add(new TicTacToeBoard(board));
         }
         runsSinceChange = 0;
     }
@@ -60,8 +60,8 @@ public class GamesRunner {
 
 
     private void playGame() {
-        Game g = new Game(new RandomPlayer(X), new RandomPlayer(O));
-        while (!g.isFinished()) {
+        TicTatToeGame g = new TicTatToeGame(new RandomPlayer(X), new RandomPlayer(O));
+        while (!g.isEndState()) {
             addBoard(g.getBoard());
             g.makeMove();
         }
@@ -69,7 +69,7 @@ public class GamesRunner {
         totalGames++;
     }
 
-    private void addBoard(Board board) {
+    private void addBoard(TicTacToeBoard board) {
         if (boards.contains(board)) {  // not novel
             runsSinceChange++;
         } else {
@@ -80,7 +80,7 @@ public class GamesRunner {
 
     public List<String> getBoards() {
         List<String> holder = new ArrayList<String>();
-        for (Board board : boards) {
+        for (TicTacToeBoard board : boards) {
             holder.add(board.toString());
         }
         Collections.sort(holder);  // alphabetize
@@ -92,7 +92,7 @@ public class GamesRunner {
         while (changeRatio() < END_RATIO) {
             playGame();
         }
-        for (Board board : boards) {
+        for (TicTacToeBoard board : boards) {
             Player p = board.hasWin();
             if (p == null) {
                 if (board.isFull())
@@ -110,7 +110,7 @@ public class GamesRunner {
     public static final double SCORE_FOR_WIN = 1;
 
     // evaluate the score for a board
-    public double score(Board test) {
+    public double score(TicTacToeBoard test) {
         Player p = test.hasWin();
         if (p != null) {
             if (p == X)
@@ -122,7 +122,7 @@ public class GamesRunner {
         }
     }
 
-    private double scoreFutures(Board test) {
+    private double scoreFutures(TicTacToeBoard test) {
         int numberXWins = countSubBoards(test, x_wins);
         int numberOWins = countSubBoards(test, o_wins);
         double xScore = SCORE_FOR_WIN * (numberXWins / (double)x_wins.size());
@@ -130,9 +130,9 @@ public class GamesRunner {
         return xScore + oScore;
     }
 
-    private int countSubBoards(Board test, Set<Board> testSet) {
+    private int countSubBoards(TicTacToeBoard test, Set<TicTacToeBoard> testSet) {
         int ret = 0;
-        for (Board board : testSet) {
+        for (TicTacToeBoard board : testSet) {
             if (test.isSubBoard(board))
                 ret++;
         }
@@ -140,9 +140,9 @@ public class GamesRunner {
     }
 
     private void showGameEvaluation() {
-        Game g = new Game(new RandomPlayer(X), new RandomPlayer(O));
-        while (!g.isFinished()) {
-            Board board = g.getBoard();
+        TicTatToeGame g = new TicTatToeGame(new RandomPlayer(X), new RandomPlayer(O));
+        while (!g.isEndState()) {
+            TicTacToeBoard board = g.getBoard();
             double d = score(board);
             Player leading = null;
             if(d > 0.2)
@@ -156,7 +156,7 @@ public class GamesRunner {
             addBoard(board);
             g.makeMove();
         }
-        Board board = g.getBoard();
+        TicTacToeBoard board = g.getBoard();
         System.out.println();
         addBoard(board);
         totalGames++;

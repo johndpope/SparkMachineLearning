@@ -15,6 +15,19 @@ public enum Player {
         this.value = value;
     }
 
+    public Player otherPlayer()
+    {
+        switch(this)   {
+            case X:
+                return O;
+            case O:
+                return X;
+            default:
+                throw new IllegalStateException("never get here");
+
+        }
+    }
+
     public Player next()
     {
         switch (this)    {

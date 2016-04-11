@@ -9,7 +9,7 @@ import java.io.Serializable;
  * User: Steve
  * Date: 4/6/2016
  */
-public interface IPlayer extends Serializable {
+public interface IStrategy extends Serializable {
 
     /**
      * playing X or O
@@ -22,6 +22,6 @@ public interface IPlayer extends Serializable {
      * @param b
      * @return
      */
-    public Position choseMove(@Nonnull Board b);
+    public TicTacToeMove choseMove(@Nonnull TicTatToeGame b);
 
 }

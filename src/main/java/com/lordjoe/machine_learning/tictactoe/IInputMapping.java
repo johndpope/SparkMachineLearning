@@ -2,7 +2,6 @@ package com.lordjoe.machine_learning.tictactoe;
 
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.linalg.Vector;
-import org.apache.spark.mllib.linalg.Vectors;
 
 import java.io.Serializable;
 
@@ -18,7 +17,7 @@ public interface IInputMapping  extends Serializable {
      * @param b  the board
      * @return
      */
-    public Vector  boardToVector(Board b);
+    public Vector  boardToVector(TicTacToeBoard b);
 
     /**
      * given the feature mapping map to a LabeledPoint
@@ -26,7 +25,7 @@ public interface IInputMapping  extends Serializable {
      * @param label  label
      * @return
      */
-    public default LabeledPoint boardToPoint(Board b, double label)  {
+    public default LabeledPoint boardToPoint(TicTacToeBoard b, double label)  {
         Vector  v = boardToVector(b);
         return new LabeledPoint(label,v);
     }
